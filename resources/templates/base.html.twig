@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>{% block title %}App{% endblock %}</title>
+</head>
+<body id="{% block body_id %}{% endblock %}">
+{% block header %}
+    <header>
+    </header>
+{% endblock %}
+
+<div class="container body-container">
+    {% block body %}
+    {% endblock %}
+</div>
+
+{% block footer %}
+    <footer>
+    </footer>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}
+</body>
+</html>

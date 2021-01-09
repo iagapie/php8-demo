@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Env: {{ app.environment }}</h1>
+    <p>
+        <a href="{{ full_url_for(uri, 'user_view', {'id': 56}) }}">
+            User view with param ID: 56
+        </a>
+    </p>
+    <p>
+        <a href="{{ url_for('user_json_view', {'name': 'Igor'}) }}">
+            User JSON view output with param name <strong>Igor</strong>
+        </a>
+    </p>
+{% endblock %}

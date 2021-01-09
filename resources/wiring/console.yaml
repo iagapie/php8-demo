@@ -1,0 +1,22 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: false
+
+  Symfony\Component\Console\Application:
+    class: Symfony\Component\Console\Application
+    public: true
+    arguments:
+      $name: '%kernel.name%'
+      $version: '%kernel.version%'
+    calls:
+      - [ setDispatcher, [ '@event_dispatcher' ] ]
+      - [ setCommandLoader, [ '@console.command_loader' ] ]
+
+  App\Console\Command\HelloCommand:
+    class: App\Console\Command\HelloCommand
+    arguments:
+      $name: 'app:hello'
+    tags:
+      - { name: 'console.command', command: 'app:hello' }

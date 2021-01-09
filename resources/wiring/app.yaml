@@ -1,0 +1,83 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  App\Controller\:
+    resource: '%kernel.project_dir%/src/Controller/'
+
+  Symfony\Component\Stopwatch\Stopwatch:
+    class: Symfony\Component\Stopwatch\Stopwatch
+    arguments:
+      $morePrecision: true
+
+  Laminas\HttpHandlerRunner\Emitter\EmitterInterface:
+    class: Laminas\HttpHandlerRunner\Emitter\SapiStreamEmitter
+
+  Nyholm\Psr7Server\ServerRequestCreatorInterface:
+    class: Nyholm\Psr7Server\ServerRequestCreator
+
+  psr17_factory:
+    class: Nyholm\Psr7\Factory\Psr17Factory
+
+  Psr\Http\Message\RequestFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\ResponseFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\ServerRequestFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\StreamFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\UploadedFileFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\UriFactoryInterface:
+    alias: psr17_factory
+
+  default_handler:
+    class: App\RequestHandler\DefaultHandler
+
+  App\Middleware\ErrorMiddleware:
+    class: App\Middleware\ErrorMiddleware
+    arguments:
+      $debug: '%kernel.debug%'
+
+  cookie_jar:
+    class: IA\Cookie\CookieJar
+
+  IA\Cookie\CookieJarInterface:
+    alias: cookie_jar
+
+  IA\Cookie\CookieJarMiddleware: ~
+
+  App\Middleware\SessionMiddleware: ~
+
+  App\Middleware\ContentLengthMiddleware: ~
+
+  App\Middleware\Rfc2616Sec94Middleware: ~
+
+  App\Middleware\JsonContentTypeMiddleware: ~
+
+  App\Middleware\BodyParsingMiddleware: ~
+
+  App\RequestHandler\MiddlewareChainHandler:
+    class: App\RequestHandler\MiddlewareChainHandler
+    arguments:
+      $defaultHandler: '@default_handler'
+    calls:
+      - [ add, [ '@IA\Cookie\CookieJarMiddleware' ] ]
+      - [ add, [ '@App\Middleware\SessionMiddleware' ] ]
+      - [ add, [ '@App\Middleware\BodyParsingMiddleware' ] ]
+      - [ add, [ '@App\Middleware\Rfc2616Sec94Middleware' ] ]
+      - [ add, [ '@App\Middleware\ContentLengthMiddleware' ] ]
+      - [ add, [ '@App\Middleware\ErrorMiddleware' ] ]
+      - [ add, [ '@IA\Route\RouteMiddleware' ] ]
+      - [ add, [ '@App\Middleware\RouteMiddleware' ] ]
+
+  Psr\Http\Server\RequestHandlerInterface:
+    alias: App\RequestHandler\MiddlewareChainHandler

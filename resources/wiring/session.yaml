@@ -1,0 +1,33 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  session_save_handler:
+    class: Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeFileSessionHandler
+    arguments:
+      $savePath: '%kernel.sessions_dir%'
+
+  session_storage:
+    class: Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage
+    arguments:
+      $handler: '@session_save_handler'
+
+  Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface:
+    alias: session_storage
+
+  session_flash:
+    class: Symfony\Component\HttpFoundation\Session\Flash\FlashBag
+
+  Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface:
+    alias: session_flash
+
+  session:
+    class: Symfony\Component\HttpFoundation\Session\Session
+    arguments:
+      $storage: '@session_storage'
+      $flashes: '@session_flash'
+
+  Symfony\Component\HttpFoundation\Session\SessionInterface:
+    alias: session

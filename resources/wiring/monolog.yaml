@@ -1,0 +1,23 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  Monolog\Processor\UidProcessor: ~
+
+  Monolog\Handler\StreamHandler:
+    class: Monolog\Handler\StreamHandler
+    arguments:
+      - '%kernel.logs_dir%/app.log'
+      - '%env(LOGGER_LEVEL)%'
+
+  logger:
+    class: Monolog\Logger
+    arguments: [ '%kernel.name%' ]
+    calls:
+      - [ pushHandler, [ '@Monolog\Handler\StreamHandler' ] ]
+      - [ pushProcessor, [ '@Monolog\Processor\UidProcessor' ] ]
+
+  Psr\Log\LoggerInterface:
+    alias: logger

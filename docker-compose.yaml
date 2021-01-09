@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:1.19-alpine
+
+  fpm:
+    image: ${DOCKER_REGISTRY:-app}/fpm:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: docker/php-fpm
+      dockerfile: Dockerfile
+
+  cli:
+    image: ${DOCKER_REGISTRY:-app}/cli:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: docker/php-cli
+      dockerfile: Dockerfile
+
+  db:
+    image: mysql:8.0

@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  nginx:
+    volumes:
+      - ./etc/dev/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./public:/app/public:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - fpm
+
+  fpm:
+    build:
+      target: dev
+      args:
+        USER_ID: ${USER_ID}
+        GROUP_ID: ${GROUP_ID}
+    volumes:
+      - .:/app:rw,cached
+    depends_on:
+      - db
+
+  cli:
+    build:
+      target: dev
+      args:
+        USER_ID: ${USER_ID}
+        GROUP_ID: ${GROUP_ID}
+    volumes:
+      - .:/app:rw,cached
+      - ./etc/dev/php/crontab:/etc/crontab:ro
+
+  db:
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./etc/dev/mysql:/etc/mysql/conf.d
+    tmpfs:
+      - /var/lib/mysql/:rw,noexec,nosuid,size=600m
+      - /tmp/:rw,noexec,nosuid,size=50m
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=app
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOSTS: "db"
+      PMA_PORTS: "3306"

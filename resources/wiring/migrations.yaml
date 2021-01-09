@@ -1,0 +1,117 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  doctrine.migrations.metadata_storage_configuration:
+    class: Doctrine\Migrations\Metadata\Storage\TableMetadataStorageConfiguration
+    calls:
+      - [ setTableName, [ 'migration_versions' ] ]
+
+  Doctrine\Migrations\Configuration\Configuration:
+    class: Doctrine\Migrations\Configuration\Configuration
+    calls:
+      - [ addMigrationsDirectory, [ 'App\Migrations', 'src/Migrations' ] ]
+      - [ setMetadataStorageConfiguration, [ '@doctrine.migrations.metadata_storage_configuration' ] ]
+
+  doctrine.migrations.configuration_loader:
+    class: Doctrine\Migrations\Configuration\Migration\ExistingConfiguration
+
+  Doctrine\Migrations\Configuration\Migration\ConfigurationLoader:
+    alias: doctrine.migrations.configuration_loader
+
+  doctrine.migrations.connection_loader:
+    class: Doctrine\Migrations\Configuration\Connection\ExistingConnection
+
+  Doctrine\Migrations\Configuration\Connection\ConnectionLoader:
+    alias: doctrine.migrations.connection_loader
+
+  Doctrine\Migrations\DependencyFactory:
+    factory: [ 'Doctrine\Migrations\DependencyFactory', 'fromConnection' ]
+    arguments:
+      $logger: '@Psr\Log\LoggerInterface'
+
+  Doctrine\Migrations\Tools\Console\Command\GenerateCommand:
+    class: Doctrine\Migrations\Tools\Console\Command\GenerateCommand
+    arguments:
+      $name: 'migrations:generate'
+    tags:
+      - { name: 'console.command', command: 'migrations:generate' }
+
+  Doctrine\Migrations\Tools\Console\Command\ExecuteCommand:
+    class: Doctrine\Migrations\Tools\Console\Command\ExecuteCommand
+    arguments:
+      $name: 'migrations:execute'
+    tags:
+      - { name: 'console.command', command: 'migrations:execute' }
+
+  Doctrine\Migrations\Tools\Console\Command\MigrateCommand:
+    class: Doctrine\Migrations\Tools\Console\Command\MigrateCommand
+    arguments:
+      $name: 'migrations:migrate'
+    tags:
+      - { name: 'console.command', command: 'migrations:migrate' }
+
+  Doctrine\Migrations\Tools\Console\Command\CurrentCommand:
+    class: Doctrine\Migrations\Tools\Console\Command\CurrentCommand
+    arguments:
+      $name: 'migrations:current'
+    tags:
+      - { name: 'console.command', command: 'migrations:current' }
+
+  Doctrine\Migrations\Tools\Console\Command\DumpSchemaCommand:
+    class: Doctrine\Migrations\Tools\Console\Command\DumpSchemaCommand
+    arguments:
+      $name: 'migrations:dump-schema'
+    tags:
+      - { name: 'console.command', command: 'migrations:dump-schema' }
+
+  Doctrine\Migrations\Tools\Console\Command\LatestCommand:
+    class: Doctrine\Migrations\Tools\Console\Command\LatestCommand
+    arguments:
+      $name: 'migrations:latest'
+    tags:
+      - { name: 'console.command', command: 'migrations:latest' }
+
+  Doctrine\Migrations\Tools\Console\Command\ListCommand:
+    class: Doctrine\Migrations\Tools\Console\Command\ListCommand
+    arguments:
+      $name: 'migrations:list'
+    tags:
+      - { name: 'console.command', command: 'migrations:list' }
+
+  Doctrine\Migrations\Tools\Console\Command\StatusCommand:
+    class: Doctrine\Migrations\Tools\Console\Command\StatusCommand
+    arguments:
+      $name: 'migrations:status'
+    tags:
+      - { name: 'console.command', command: 'migrations:status' }
+
+  Doctrine\Migrations\Tools\Console\Command\SyncMetadataCommand:
+    class: Doctrine\Migrations\Tools\Console\Command\SyncMetadataCommand
+    arguments:
+      $name: 'migrations:sync-metadata-storage'
+    tags:
+      - { name: 'console.command', command: 'migrations:sync-metadata-storage' }
+
+  Doctrine\Migrations\Tools\Console\Command\RollupCommand:
+    class: Doctrine\Migrations\Tools\Console\Command\RollupCommand
+    arguments:
+      $name: 'migrations:rollup'
+    tags:
+      - { name: 'console.command', command: 'migrations:rollup' }
+
+  Doctrine\Migrations\Tools\Console\Command\VersionCommand:
+    class: Doctrine\Migrations\Tools\Console\Command\VersionCommand
+    arguments:
+      $name: 'migrations:version'
+    tags:
+      - { name: 'console.command', command: 'migrations:version' }
+
+  Doctrine\Migrations\Tools\Console\Command\UpToDateCommand:
+    class: Doctrine\Migrations\Tools\Console\Command\UpToDateCommand
+    arguments:
+      $name: 'migrations:up-to-date'
+    tags:
+      - { name: 'console.command', command: 'migrations:up-to-date' }

@@ -1,0 +1,31 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  Doctrine\Common\EventManager: ~
+
+  Doctrine\DBAL\Configuration:
+    class: Doctrine\DBAL\Configuration
+    calls:
+      - [ setAutoCommit, [ false ] ]
+
+  Doctrine\DBAL\Connection:
+    factory: [ 'Doctrine\DBAL\DriverManager', 'getConnection' ]
+    arguments:
+      - url: '%env(DATABASE_URL)%'
+      - '@Doctrine\DBAL\Configuration'
+
+  Doctrine\DBAL\Tools\Console\ConnectionProvider:
+    class: Doctrine\DBAL\Tools\Console\ConnectionProvider\SingleConnectionProvider
+
+  Doctrine\DBAL\Tools\Console\Command\RunSqlCommand:
+    class: Doctrine\DBAL\Tools\Console\Command\RunSqlCommand
+    tags:
+      - { name: 'console.command', command: 'dbal:run-sql' }
+
+  Doctrine\DBAL\Tools\Console\Command\ReservedWordsCommand:
+    class: Doctrine\DBAL\Tools\Console\Command\ReservedWordsCommand
+    tags:
+      - { name: 'console.command', command: 'dbal:reserved-words' }

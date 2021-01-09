@@ -1,0 +1,19 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  event_dispatcher:
+    class: Symfony\Component\EventDispatcher\EventDispatcher
+    tags:
+      - { name: 'event_dispatcher.dispatcher' }
+
+  Symfony\Component\EventDispatcher\EventDispatcherInterface:
+    alias: event_dispatcher
+
+  Symfony\Contracts\EventDispatcher\EventDispatcherInterface:
+    alias: event_dispatcher
+
+  Psr\EventDispatcher\EventDispatcherInterface:
+    alias: event_dispatcher

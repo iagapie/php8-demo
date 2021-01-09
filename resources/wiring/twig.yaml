@@ -1,0 +1,35 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  Twig\Loader\LoaderInterface:
+    class: Twig\Loader\FilesystemLoader
+    arguments:
+      $paths: '%kernel.resources_dir%/templates'
+
+  Twig\Environment:
+    class: Twig\Environment
+    arguments:
+      $options:
+        cache: '%kernel.cache_dir%/templates'
+        debug: '%kernel.debug%'
+    calls:
+      -
+        - addGlobal
+        -
+          - 'app'
+          - name: '%kernel.name%'
+            version: '%kernel.version%'
+            environment: '%kernel.environment%'
+            debug: '%kernel.debug%'
+            project_dir: '%kernel.project_dir%'
+            resources_dir: '%kernel.resources_dir%'
+            cache_dir: '%kernel.cache_dir%'
+      - [ addExtension, [ '@App\Templating\TwigExtension' ] ]
+
+  App\Templating\TwigExtension: ~
+
+  App\Templating\EngineInterface:
+    class: App\Templating\TwigEngine

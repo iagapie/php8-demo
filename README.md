@@ -21,7 +21,7 @@ $ # Linux
 $ sed -i "s/USER_ID=.*/USER_ID=$(id -u)/g" .env
 $ sed -i "s/GROUP_ID=.*/GROUP_ID=$(id -g)/g" .env
 
-$ make start
+$ make up
 $ make install
 ```
 
